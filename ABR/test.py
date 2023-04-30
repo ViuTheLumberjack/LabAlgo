@@ -20,16 +20,17 @@ def save_graph(df: pd.DataFrame, title: str, x: str, y: str, x_title: str, y_tit
     plt.plot(df[x], df[y].where(df['abr_type'] == 'flag'), label='flag')
     plt.xlabel(x_title)
     plt.ylabel(y_title)
-    plt.yscale('log')
     plt.title(title)
     plt.legend()
-    plt.savefig(f'{filename}.png')
+    plt.savefig(f'{filename}_linear.png')
+    plt.yscale('log')
+    plt.savefig(f'{filename}_log.png')
     plt.clf()
 
 RANDOM_RANGES = [(0, 100), (0, 500)]
 DATA_MEAN = 100
 ITERATIONS = (10, 10000)
-STEP = 50
+STEP = 100
 
 for random_range in RANDOM_RANGES:
     df_list: list = []
