@@ -12,27 +12,6 @@ class ABR:
         self.root = None
         self.length = 0
 
-    def inorder_tree_walk(self, node: Node):
-        # Stampa in ordine crescente le chiavi dell'albero
-        if node is not None:
-            self.inorder_tree_walk(node.left)
-            print(node.key)
-            self.inorder_tree_walk(node.right)
-
-    def preorder_tree_walk(self, node: Node):
-        # Stampa le chiavi dell'albero in ordine di visita, prima il ramo sinistro, poi il ramo destro
-        if node is not None:
-            print(node.key)
-            self.preorder_tree_walk(node.left)
-            self.preorder_tree_walk(node.right)
-
-    def postorder_tree_walk(self, node: Node):
-        # Stampa le chiavi dell'albero in ordine decrescente
-        if node is not None:
-            self.postorder_tree_walk(node.left)
-            self.postorder_tree_walk(node.right)
-            print(node.key)
-
     def getHeight(self, node: Node):
         if node is None:
             return 0

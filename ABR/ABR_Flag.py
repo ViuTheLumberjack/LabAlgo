@@ -12,27 +12,6 @@ class ABR:
     def __init__(self):
         self.root = None
         self.length = 0
-
-    def inorder_tree_walk(self, node: Node):
-        # Stampa in ordine crescente le chiavi dell'albero
-        if node is not None:
-            self.inorder_tree_walk(node.left)
-            print(node.key)
-            self.inorder_tree_walk(node.right)
-
-    def preorder_tree_walk(self, node: Node):
-        # Stampa le chiavi dell'albero in ordine di visita, prima il ramo sinistro, poi il ramo destro
-        if node is not None:
-            print(node.key)
-            self.preorder_tree_walk(node.left)
-            self.preorder_tree_walk(node.right)
-
-    def postorder_tree_walk(self, node: Node):
-        # Stampa le chiavi dell'albero in ordine decrescente
-        if node is not None:
-            self.postorder_tree_walk(node.left)
-            self.postorder_tree_walk(node.right)
-            print(node.key)
             
     def getHeight(self, node: Node):
         if node is None:
@@ -82,13 +61,14 @@ class ABR:
         while x is not None:
             y = x
             if z.key == x.key:
-                # Cambio il flag
-                x.flag = not x.flag
                 # Controllo il flag con logica inversa per decidere se inserire il nodo nel sottoalbero sinistro o destro
-                if not x.flag:
+                if x.flag:
                     x = x.right
                 else:
                     x = x.left
+                # se l'inserimento non avviene al prossimo livello, cambio il flag in modo da bilanciare i molti valori ripetuti
+                if x is not None:
+                    y.flag = not y.flag
             elif z.key < x.key:
                 x = x.left
             else:

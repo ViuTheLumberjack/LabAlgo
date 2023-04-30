@@ -29,7 +29,9 @@ def save_graph(df: pd.DataFrame, title: str, x: str, y: str, x_title: str, y_tit
 RANDOM_RANGES = [(0, 100), (0, 500)]
 DATA_MEAN = 100
 ITERATIONS = (10, 10000)
-STEP = 100
+STEP = 50
+
+app = ABRTester(flag.ABR(), 'flag').test([1, 1, 1, 2, 1, 1, 1])
 
 for random_range in RANDOM_RANGES:
     df_list: list = []
