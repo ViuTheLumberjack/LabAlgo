@@ -31,8 +31,6 @@ DATA_MEAN = 100
 ITERATIONS = (10, 10000)
 STEP = 50
 
-app = ABRTester(flag.ABR(), 'flag').test([1, 1, 1, 2, 1, 1, 1])
-
 for random_range in RANDOM_RANGES:
     df_list: list = []
     for d in range(DATA_MEAN):
