@@ -12,13 +12,6 @@ class ABR:
         self.root = None
         self.length = 0
 
-    def __init__(self, values: list):
-        self.root = None
-        self.length = 0
-
-        for value in values:
-            self.tree_insert(value, chr(value))
-
     def inorder_tree_walk(self, node: Node):
         # Stampa in ordine crescente le chiavi dell'albero
         if node is not None:

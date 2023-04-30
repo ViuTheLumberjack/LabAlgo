@@ -5,94 +5,58 @@ from ABRTester import ABRTester
 
 import pandas as pd
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import sys
-import gc
 
 sys.setrecursionlimit(100000)
 
-def save_height_before_graph(df: pd.DataFrame, range: tuple):
-    # crea un grafico con n sull'asse x e height_before sull'asse y
-    plt.plot(df['n'], df['height_before'].where(df['abr_type'] == 'abr'), label='normale')
-    plt.plot(df['n'], df['height_before'].where(df['abr_type'] == 'lista'), label='lista')
-    plt.plot(df['n'], df['height_before'].where(df['abr_type'] == 'flag'), label='flag')
-    plt.xlabel('n')
-    plt.ylabel('altezza')
-    plt.title('Altezza prima dell\'eliminazione')
+def save_graph(df: pd.DataFrame, title: str, x: str, y: str, x_title: str, y_title: str, filename: str):
+    # crea un grafico
+    plt.figure(figsize=(15, 5))
+    plt.plot(df[x].where(df['abr_type'] == 'abr'), df[y].where(df['abr_type'] == 'abr'), label='normale')
+    plt.plot(df[x], df[y].where(df['abr_type'] == 'lista'), label='lista')
+    plt.plot(df[x], df[y].where(df['abr_type'] == 'flag'), label='flag')
+    plt.xlabel(x_title)
+    plt.ylabel(y_title)
+    plt.yscale('log')
+    plt.title(title)
     plt.legend()
-    plt.savefig(f'out/height_before_graph_{range[1]}.png')
+    plt.savefig(f'{filename}.png')
     plt.clf()
 
-def save_height_after_graph(df: pd.DataFrame, range: tuple):
-    # crea un grafico con n sull'asse x e height_after sull'asse y
-    plt.plot(df['n'], df['height_after'].where(df['abr_type'] == 'abr'), label='normale')
-    plt.plot(df['n'], df['height_after'].where(df['abr_type'] == 'lista'), label='lista')
-    plt.plot(df['n'], df['height_after'].where(df['abr_type'] == 'flag'), label='flag')
-    plt.xlabel('n')
-    plt.ylabel('altezza')
-    plt.title('Altezza dopo l\'eliminazione')
-    plt.legend()
-    plt.savefig(f'out/height_after_graph_{range[1]}.png')
-    plt.clf()
-
-def save_insert_graph(df: pd.DataFrame, range: tuple):
-    # crea un grafico con n sull'asse x e height_after sull'asse y
-    plt.plot(df['n'], df['insert_time'].where(df['abr_type'] == 'abr'), label='normale')
-    plt.plot(df['n'], df['insert_time'].where(df['abr_type'] == 'lista'), label='lista')
-    plt.plot(df['n'], df['insert_time'].where(df['abr_type'] == 'flag'), label='flag')
-    plt.xlabel('n')
-    plt.ylabel('tempo')
-    plt.title('Tempo di inserimento')
-    plt.legend()
-    plt.savefig(f'out/insert_graph_{range[1]}.png')
-    plt.clf()
-
-def save_search_graph(df: pd.DataFrame, range: tuple):
-    # crea un grafico con n sull'asse x e height_after sull'asse y
-    plt.plot(df['n'], df['search_time'].where(df['abr_type'] == 'abr'), label='normale')
-    plt.plot(df['n'], df['search_time'].where(df['abr_type'] == 'lista'), label='lista')
-    plt.plot(df['n'], df['search_time'].where(df['abr_type'] == 'flag'), label='flag')
-    plt.xlabel('n')
-    plt.ylabel('tempo')
-    plt.title('Tempo di ricerca')
-    plt.legend()
-    plt.savefig(f'out/search_graph_{range[1]}.png')
-    plt.clf()
-
-def save_delete_graph(df: pd.DataFrame, range: tuple):
-    # crea un grafico con n sull'asse x e height_after sull'asse y
-    plt.plot(df['n'], df['delete_time'].where(df['abr_type'] == 'abr'), label='normale')
-    plt.plot(df['n'], df['delete_time'].where(df['abr_type'] == 'lista'), label='lista')
-    plt.plot(df['n'], df['delete_time'].where(df['abr_type'] == 'flag'), label='flag')
-    plt.xlabel('n')
-    plt.ylabel('tempo')
-    plt.title('Tempo di eliminazione')
-    plt.legend()
-    plt.savefig(f'out/delete_graph_{range[1]}.png') 
-    plt.clf()
-
-RANDOM_RANGES = [(0, 10), (0, 50)]
-ITERATIONS = (10, 1000)
-STEP = 5
+RANDOM_RANGES = [(0, 100), (0, 500)]
+DATA_MEAN = 100
+ITERATIONS = (10, 10000)
+STEP = 100
 
 for random_range in RANDOM_RANGES:
-    ## Test 1 con range (0, 100)
     df_list: list = []
+    for d in range(DATA_MEAN):
+        df_app: list = []
+        value_list: list = []
 
-    for i in range(ITERATIONS[0], ITERATIONS[1], STEP):
-        df_list.append(ABRTester(lista.ABR(), 'lista').test(i, random_range))
-        gc.collect()
-    for i in range(ITERATIONS[0], ITERATIONS[1], STEP):
-        df_list.append(ABRTester(flag.ABR(), 'flag').test(i, random_range))
-        gc.collect()
-    for i in range(ITERATIONS[0], ITERATIONS[1], STEP):
-        df_list.append(ABRTester(abr.ABR(), 'abr').test(i, random_range))
-        gc.collect()
+        for i in range(ITERATIONS[0], ITERATIONS[1], STEP):
+            value_list.append(np.random.randint(random_range[0], random_range[1], i))
+        for i in range(ITERATIONS[0], ITERATIONS[1], STEP):
+            df_app.append(ABRTester(lista.ABR(), 'lista').test(value_list[(i - ITERATIONS[0]) // STEP]))
+        for i in range(ITERATIONS[0], ITERATIONS[1], STEP):
+            df_app.append(ABRTester(flag.ABR(), 'flag').test(value_list[(i - ITERATIONS[0]) // STEP]))
+        for i in range(ITERATIONS[0], ITERATIONS[1], STEP):
+            df_app.append(ABRTester(abr.ABR(), 'abr').test(value_list[(i - ITERATIONS[0]) // STEP]))
 
-    df = pd.concat(df_list, ignore_index=True)
+        print(f'{d} - {random_range[1]}')
+        df_list.append(pd.concat(df_app, ignore_index=True))
 
-    save_height_before_graph(df, random_range)
-    save_height_after_graph(df, random_range)
-    save_insert_graph(df, random_range)
-    save_search_graph(df, random_range)
-    save_delete_graph(df, random_range)
+    df_concat = pd.concat(df_list)
+    by_row_index = df_concat.groupby([df_concat.index, 'n', 'abr_type'])
+    df = by_row_index.mean(numeric_only=True).reset_index()
+
+    save_graph(df, 'Altezza prima dell\'eliminazione', 'n', 'height_before', 'n', 'altezza', f'out/height_before_graph_{random_range[1]}')
+    save_graph(df, 'Altezza dopo l\'eliminazione', 'n', 'height_after', 'n', 'altezza', f'out/height_after_graph_{random_range[1]}')
+    save_graph(df, 'Tempo di inserimento', 'n', 'insert_time', 'n', 'altezza', f'out/insert_graph_{random_range[1]}')
+    save_graph(df, 'Tempo di ricerca', 'n', 'search_time', 'n', 'altezza', f'out/search_graph_{random_range[1]}')
+    save_graph(df, 'Tempo di eliminazione', 'n', 'delete_time', 'n', 'altezza', f'out/delete_graph_{random_range[1]}')
+    df.to_csv(f'out/df_{random_range[1]}.csv', index=False)
+    print(f'Finito {random_range}')

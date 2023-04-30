@@ -30,10 +30,10 @@ class ABRTester:
     def test_height(self) -> int:
         return self.ABR.getHeight(self.ABR.root)
     
-    def test(self, n: int, range: tuple) -> pd.DataFrame:
+    def test(self, values: list) -> pd.DataFrame:
         # colonne: n, abr_type, height_before, height_after, insert_time, search_time, delete_time
         # righe: 1 riga per ogni test
-        values = np.random.randint(range[0], range[1], n)
+        n = len(values)
         # inserimento dei valori nell'albero
         insert_times = []
         for v in values:
