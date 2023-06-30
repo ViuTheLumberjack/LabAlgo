@@ -4,3 +4,16 @@ lib
 share
 etc
 .vscode
+*.dll
+LICENSE_PYTHON.txt
+python*.*
+.nonadmin
+
+Scripts/
+DLLs/
+conda-meta/
+include/
+Lib/
+libs/
+Tools/
+Library/

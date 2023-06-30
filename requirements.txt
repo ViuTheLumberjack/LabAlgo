@@ -38,7 +38,7 @@ jupyter-server==2.5.0
 jupyter-server-fileid==0.9.0
 jupyter-server-terminals==0.4.4
 jupyter-server-ydoc==0.8.0
-jupyter-ydoc==0.2.4
+jupyter-ydoc
 jupyterlab==3.6.3
 jupyterlab-pygments==0.2.2
 jupyterlab-server==2.22.1
@@ -97,6 +97,6 @@ urllib3==1.26.15
 wcwidth==0.2.6
 webencodings==0.5.1
 websocket-client==1.5.1
-y-py==0.5.9
-ypy-websocket==0.8.4
+y-py
+ypy-websocket
 zipp==3.15.0

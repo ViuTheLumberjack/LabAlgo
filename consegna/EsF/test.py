@@ -6,18 +6,29 @@ from ABRTester import ABRTester
 import pandas as pd
 import numpy as np
 import matplotlib
+from scipy.interpolate import make_interp_spline, BSpline
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import sys
+import pdb
 
 sys.setrecursionlimit(100000)
 
-def save_graph(df: pd.DataFrame, title: str, x: str, y: str, x_title: str, y_title: str, filename: str):
+def save_graph(df: pd.DataFrame, title: str, x: str, y: str, x_title: str, y_title: str, filename: str, smooth=False):
     # crea un grafico
     plt.figure(figsize=(15, 5))
-    plt.plot(df[x].where(df['abr_type'] == 'abr'), df[y].where(df['abr_type'] == 'abr'), label='normale')
-    plt.plot(df[x], df[y].where(df['abr_type'] == 'lista'), label='lista')
-    plt.plot(df[x], df[y].where(df['abr_type'] == 'flag'), label='flag')
+    if smooth:
+        xnew = np.linspace(df[x].min(), df[x].max(), 30000)
+        spl_abr = make_interp_spline(df[x].where(df['abr_type'] == 'abr').dropna(), df[y].where(df['abr_type'] == 'abr').dropna())
+        spl_lista = make_interp_spline(df[x].where(df['abr_type'] == 'lista').dropna(), df[y].where(df['abr_type'] == 'lista').dropna())
+        spl_flag = make_interp_spline(df[x].where(df['abr_type'] == 'flag').dropna(), df[y].where(df['abr_type'] == 'flag').dropna())
+        plt.plot(xnew, spl_abr(xnew), label='normale')
+        plt.plot(xnew, spl_lista(xnew), label='lista')
+        plt.plot(xnew, spl_flag(xnew), label='flag')
+    else:
+        plt.plot(df[x].where(df['abr_type'] == 'abr'), df[y].where(df['abr_type'] == 'abr'), label='normale')
+        plt.plot(df[x].where(df['abr_type'] == 'lista'), df[y].where(df['abr_type'] == 'lista'), label='lista')
+        plt.plot(df[x].where(df['abr_type'] == 'flag'), df[y].where(df['abr_type'] == 'flag'), label='flag')
     plt.xlabel(x_title)
     plt.ylabel(y_title)
     plt.title(title)
@@ -56,8 +67,9 @@ for random_range in RANDOM_RANGES:
 
     save_graph(df, 'Altezza prima dell\'eliminazione', 'n', 'height_before', 'n', 'altezza', f'out/height_before_graph_{random_range[1]}')
     save_graph(df, 'Altezza dopo l\'eliminazione', 'n', 'height_after', 'n', 'altezza', f'out/height_after_graph_{random_range[1]}')
-    save_graph(df, 'Tempo di inserimento', 'n', 'insert_time', 'n', 'altezza', f'out/insert_graph_{random_range[1]}')
-    save_graph(df, 'Tempo di ricerca', 'n', 'search_time', 'n', 'altezza', f'out/search_graph_{random_range[1]}')
-    save_graph(df, 'Tempo di eliminazione', 'n', 'delete_time', 'n', 'altezza', f'out/delete_graph_{random_range[1]}')
+    save_graph(df, 'Tempo di inserimento', 'n', 'insert_time', 'n', 'tempo', f'out/insert_graph_{random_range[1]}')
+    save_graph(df, 'Tempo di ricerca', 'n', 'search_time', 'n', 'tempo', f'out/search_graph_{random_range[1]}')
+    save_graph(df, 'Tempo di eliminazione', 'n', 'delete_time', 'n', 'tempo', f'out/delete_graph_{random_range[1]}')
     df.to_csv(f'out/df_{random_range[1]}.csv', index=False)
+    df_concat.to_csv(f'out/dfc_{random_range[1]}.csv', index=False)
     print(f'Finito {random_range}')
